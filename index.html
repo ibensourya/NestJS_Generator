@@ -1,452 +1,350 @@
-<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NestJS Application Generator</title>
+    <title>NestJS Schema Generator | Transform SQL to Complete Backend</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#5D5CDE',
-                        'primary-dark': '#4C4BBE'
+                        'primary-dark': '#4A4BC7'
                     }
                 }
             }
         }
     </script>
+    <style>
+        .upload-area {
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            transform: translateY(-2px);
+        }
+        .upload-area.drag-over {
+            border-color: #5D5CDE;
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .dark .feature-card:hover {
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+        }
+        .toggle-switch {
+            transition: all 0.3s ease;
+        }
+        .step-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        .step-card:nth-child(2) { animation-delay: 0.1s; }
+        .step-card:nth-child(3) { animation-delay: 0.2s; }
+        .step-card:nth-child(4) { animation-delay: 0.3s; }
+        .step-card:nth-child(5) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
-    <header class="bg-primary text-white shadow">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            <span class="font-semibold text-lg">NestJS Generator</span>
-            <a href="https://github.com" target="_blank" class="hover:underline text-sm">GitHub</a>
-        </div>
-    </header>
-    <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Header -->
         <div class="text-center mb-12">
-            <div class="flex items-center justify-center mb-6">
-                <div class="bg-gradient-to-r from-primary to-purple-600 p-4 rounded-2xl shadow-lg mr-4">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                        NestJS Generator
-                    </h1>
-                    <p class="text-xl text-gray-500 dark:text-gray-400 mt-2">Professional Backend in Minutes</p>
-                </div>
-            </div>
-            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
-                Transform your SQL schemas into production-ready NestJS backends with authentication, CRUD operations, and comprehensive documentation. Enterprise-grade code generation at your fingertips.
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                NestJS Schema Generator
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-2">Transform SQL to Complete Backend</p>
+            <p class="text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
+                Transform your SQL schemas into production-ready NestJS backends with authentication, CRUD operations, and comprehensive documentation.
             </p>
-            
-            <!-- Stats -->
-            <div class="flex justify-center space-x-8 mt-8">
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-primary">100%</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">TypeScript</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-primary">5+</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Databases</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-primary">JWT</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Auth Ready</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-primary">REST</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">APIs</div>
-                </div>
+            <div class="mt-6">
+                <a href="https://github.com" target="_blank" class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-primary transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"></path>
+                    </svg>
+                    GitHub
+                </a>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="grid grid-cols-1 gap-8">
-            <!-- Input Section -->
-            <div class="space-y-6">
-                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg">
-                    <h2 class="text-2xl font-bold mb-6 flex items-center">
-                        <div class="bg-primary/10 p-2 rounded-lg mr-3">
-                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 1.79 4 4 4h8c0-2.21-1.79-4-4-4H8c-2.21 0-4-1.79-4-4z"></path>
-                            </svg>
-                        </div>
-                        📋 SQL Schema Input
-                    </h2>
+        <div class="grid lg:grid-cols-2 gap-8 mb-12">
+            <!-- Left Column -->
+            <div class="space-y-8">
+                <!-- Step 1: Upload SQL Schema -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</div>
+                        <h2 class="text-2xl font-semibold">Upload SQL Schema</h2>
+                    </div>
                     
-                    <!-- Upload or Type Toggle -->
+                    <div class="upload-area border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer" id="uploadArea">
+                        <div id="uploadContent">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                                <span id="fileName">Aucun fichier choisi</span>
+                            </p>
+                            <p class="text-gray-500 dark:text-gray-500 mb-4">Drop your SQL file here</p>
+                            <p class="text-sm text-gray-400 dark:text-gray-600 mb-4">or click to browse files</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">Supports PostgreSQL, MySQL, SQL Server, Oracle</p>
+                        </div>
+                        <input type="file" id="fileInput" class="hidden" accept=".sql,.txt">
+                    </div>
+                </div>
+
+                <!-- Step 2: Configure Features -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</div>
+                        <h2 class="text-2xl font-semibold">Configure Features</h2>
+                    </div>
+
+                    <!-- Configuration Header -->
+                    <div class="flex items-center mb-6">
+                        <span class="text-2xl mr-3">⚙️</span>
+                        <div>
+                            <h3 class="text-lg font-semibold">Configuration</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Customize your generated NestJS application</p>
+                        </div>
+                    </div>
+
+                    <!-- Database Type Selection -->
                     <div class="mb-6">
-                        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                            <button id="typeSchemaBtn" class="flex-1 py-2 px-4 rounded-md bg-white dark:bg-gray-800 shadow-sm text-sm font-medium transition-all">
-                                ✏️ Type Schema
-                            </button>
-                            <button id="uploadSchemaBtn" class="flex-1 py-2 px-4 rounded-md text-gray-600 dark:text-gray-400 text-sm font-medium transition-all hover:bg-white dark:hover:bg-gray-800">
-                                📤 Upload SQL File
-                            </button>
+                        <h4 class="font-semibold mb-3">Output Database Type</h4>
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <span class="text-2xl">🐘</span>
+                            <select id="dbType" class="flex-1 bg-transparent border-none outline-none text-base">
+                                <option value="postgresql">PostgreSQL</option>
+                                <option value="mysql">MySQL</option>
+                                <option value="mssql">SQL Server</option>
+                                <option value="oracle">Oracle</option>
+                            </select>
                         </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Choose the target database for your generated application</p>
                     </div>
 
-                    <!-- Schema Input Area -->
-                    <div id="schemaTypeArea">
-                        <textarea id="sqlSchema" class="w-full h-72 p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-base font-mono resize-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="✨ Enter your SQL schema here...
-
-🔥 Example:
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    role VARCHAR(50) DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE posts (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT,
-    user_id INTEGER REFERENCES users(id),
-    published BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);"></textarea>
-                    </div>
-
-                    <!-- Upload Area -->
-                    <div id="schemaUploadArea" class="hidden">
-                        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-primary transition-colors">
-                            <input type="file" id="sqlFileInput" accept=".sql,.txt" class="hidden">
-                            <div class="space-y-4">
-                                <div class="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                    </svg>
+                    <!-- Features -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Features</h4>
+                        <div class="space-y-4">
+                            <!-- CRUD Operations -->
+                            <div class="feature-card p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xl">🔧</span>
+                                        <div>
+                                            <h5 class="font-medium">CRUD Operations</h5>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Generate complete CRUD operations for all tables</p>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch relative inline-block w-12 h-6">
+                                        <input type="checkbox" id="crudToggle" checked class="sr-only">
+                                        <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300"></span>
+                                    </label>
                                 </div>
-                                <div>
-                                    <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Drop your SQL file here</p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">or click to browse</p>
-                                </div>
-                                <button type="button" onclick="document.getElementById('sqlFileInput').click()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
-                                    Choose File
-                                </button>
                             </div>
-                        </div>
-                        <div id="uploadedFileName" class="hidden mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span class="text-green-700 dark:text-green-300 font-medium" id="fileName"></span>
+
+                            <!-- Field Validations -->
+                            <div class="feature-card p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xl">✅</span>
+                                        <div>
+                                            <h5 class="font-medium">Field Validations</h5>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Add comprehensive field validations (email, unique, required)</p>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch relative inline-block w-12 h-6">
+                                        <input type="checkbox" id="validationToggle" checked class="sr-only">
+                                        <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Swagger Docs -->
+                            <div class="feature-card p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xl">📚</span>
+                                        <div>
+                                            <h5 class="font-medium">Swagger Docs</h5>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Generate Swagger/OpenAPI documentation</p>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch relative inline-block w-12 h-6">
+                                        <input type="checkbox" id="swaggerToggle" checked class="sr-only">
+                                        <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- FTP Support -->
+                            <div class="feature-card p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xl">📁</span>
+                                        <div>
+                                            <h5 class="font-medium">FTP Support</h5>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Include FTP configuration and file handling utilities</p>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch relative inline-block w-12 h-6">
+                                        <input type="checkbox" id="ftpToggle" class="sr-only">
+                                        <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Google OAuth -->
+                            <div class="feature-card p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xl">🔑</span>
+                                        <div>
+                                            <h5 class="font-medium">Google OAuth</h5>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Add Google OAuth 2.0 authentication setup</p>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch relative inline-block w-12 h-6">
+                                        <input type="checkbox" id="oauthToggle" class="sr-only">
+                                        <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Configuration Section -->
-            <div class="space-y-6">
-                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg">
-                    <h2 class="text-2xl font-bold mb-6 flex items-center">
-                        <div class="bg-primary/10 p-2 rounded-lg mr-3">
-                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                        </div>
-                        ⚙️ Configure Features
-                    </h2>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">Customize your generated NestJS application</p>
-                    
-                    <div class="space-y-6">
-                        <!-- App Settings -->
-                        <div class="space-y-4">
-                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center">
-                                <span class="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                                Application Settings
-                            </h4>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">📦 Application Name</label>
-                                <input type="text" id="appName" value="my-nestjs-app" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-base focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">🗄️ Database Type</label>
-                                <select id="dbType" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-base focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value="postgres">🐘 PostgreSQL</option>
-                                    <option value="mysql">🐬 MySQL</option>
-                                    <option value="mssql">🏢 SQL Server</option>
-                                    <option value="oracle">🔶 Oracle</option>
-                                    <option value="mongodb">🍃 MongoDB</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Features -->
-                        <div class="space-y-4">
-                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center">
-                                <span class="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                                Features &amp; Integrations
-                            </h4>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeAuth" checked="" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">🔐 JWT Authentication</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Login, register, and protected routes</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeValidation" checked="" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">✅ Input Validation</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Automatic request validation with class-validator</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeSwagger" checked="" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">📚 Swagger Documentation</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Interactive API documentation</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeDocker" checked="" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">🐳 Docker Configuration</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Dockerfile and docker-compose.yml</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeTesting" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">🧪 Unit Tests</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Jest test files for services and controllers</div>
-                                    </div>
-                                </label>
-
-                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeLogger" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
-                                    <div class="flex-1">
-                                        <div class="font-medium">📝 Winston Logger</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Structured logging with Winston</div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Right Column -->
+            <div class="space-y-8">
                 <!-- Configuration Summary -->
-                <div id="configSummary" class="bg-gradient-to-r from-primary/5 to-purple-600/5 border border-primary/20 rounded-2xl p-6">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center text-primary">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                        Configuration Summary
-                    </h3>
-                    <div id="summaryContent" class="space-y-2 text-sm">
-                        <!-- Summary will be populated by JavaScript -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-semibold mb-4">Configuration Summary</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center">
+                            <span class="font-medium mr-2">• Database:</span>
+                            <span id="summaryDb" class="text-primary font-medium">PostgreSQL</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium mr-2">• Features:</span>
+                            <span id="featureCount" class="text-primary font-medium">3</span>
+                            <span class="ml-1">enabled</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium mr-2">• Authentication:</span>
+                            <span class="text-green-600 dark:text-green-400">JWT + Role-based access control</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium mr-2">• Documentation:</span>
+                            <span class="text-blue-600 dark:text-blue-400">README + TypeScript definitions</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Generate Button -->
-                <button id="generateBtn" class="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary-dark hover:to-purple-700 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl group">
-                    <span class="flex items-center justify-center">
-                        <svg class="w-6 h-6 mr-3 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                        <span class="text-lg">🚀 Generate NestJS Application</span>
-                    </span>
-                </button>
-
-                <!-- Share Generator -->
-                <div class="flex space-x-3">
-                    <button id="shareBtn" class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                        </svg>
-                        Share Generator
-                    </button>
-                    <button id="resetBtn" class="px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all" title="Reset Configuration">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <button id="generateBtn" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 text-lg">
+                        Generate Application
                     </button>
                 </div>
-            </div>
 
-            <!-- Output Section -->
-            <div class="space-y-6">
-                <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg">
-                    <div class="p-6 bg-primary text-white flex items-center justify-between">
-                        <h2 class="text-2xl font-bold flex items-center justify-between">
-                            <span class="flex items-center">
-                                <div class="bg-white/20 p-2 rounded-lg mr-3">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                                    </svg>
-                                </div>
-                                📦 Output
-                            </span>
-                            <div class="flex space-x-3">
-                                <button id="downloadZipBtn" class="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center" disabled="">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Download ZIP
-                                </button>
-                                
-                            </div>
-                        </h2>
-                        <p class="text-gray-600 dark:text-gray-400 mt-2">Your generated NestJS application will appear here</p>
+                <!-- Output -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl mr-3">📦</span>
+                        <h3 class="text-xl font-semibold">Output</h3>
                     </div>
-
-                    <!-- File Tree -->
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex space-x-2 mb-4">
-                            <button class="file-tab active px-4 py-2 rounded-lg bg-primary text-white text-sm" data-file="structure">
-                                Project Structure
-                            </button>
-                        </div>
-                        <div id="fileTree" class="hidden text-sm font-mono space-y-1">
-                            <!-- File tree will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Code Display -->
-                    <div class="relative">
-                        <div id="loadingState" class="p-12 text-center text-gray-500 dark:text-gray-400">
-                            <div class="mb-6">
-                                <div class="w-16 h-16 mx-auto bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Ready to Generate</h3>
-                            <p class="text-gray-500 dark:text-gray-400 mb-6">Enter your SQL schema and configure features to create your NestJS application</p>
-                            <div class="flex justify-center space-x-4 text-sm">
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-primary rounded-full mr-2"></div>
-                                    TypeScript Ready
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                                    Production Ready
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                                    Docker Ready
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Success State -->
-                        <div id="successState" class="hidden p-12 text-center">
-                            <div class="mb-6">
-                                <div class="w-20 h-20 mx-auto bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg">
-                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">🎉 Application Ready!</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-6">Your NestJS application has been generated successfully</p>
-                            <div class="flex justify-center space-x-4 mb-6">
-                                <button onclick="document.getElementById('downloadZipBtn').click()" class="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all shadow-lg font-medium">
-                                    📦 Download Application
-                                </button>
-                            </div>
-                            <div id="generationStats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                                <!-- Stats will be populated by JavaScript -->
-                            </div>
-                        </div>
-
-                        <div id="codeOutput" class="hidden">
-                            <pre class="text-sm overflow-x-auto"><code id="generatedCode" class="language-typescript">
-                            </code></pre>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Progress Indicator -->
-                <div id="progressContainer" class="hidden bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                        <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
-                        </svg>
-                        Generation Progress
-                    </h3>
-                    <ol class="space-y-3">
-                        <li class="progress-item flex items-center" data-step="parse">
-                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span>Parsing SQL Schema</span>
-                        </li>
-                        <li class="progress-item flex items-center" data-step="entities">
-                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span>Generating Entities</span>
-                        </li>
-                        <li class="progress-item flex items-center" data-step="controllers">
-                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span>Creating Controllers &amp; Services</span>
-                        </li>
-                        <li class="progress-item flex items-center" data-step="auth">
-                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span>Setting up Authentication</span>
-                        </li>
-                        <li class="progress-item flex items-center" data-step="docs">
-                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span>Generating Documentation</span>
-                        </li>
-                    </ol>
-                    <div class="mt-6">
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-                            <div id="progressBar" class="h-full bg-primary transition-all" style="width:0%"></div>
-                        </div>
+                    <div id="outputContent" class="min-h-32 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-gray-500 dark:text-gray-400 text-center">Your generated NestJS application will appear here</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- How It Works -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-3xl font-bold text-center mb-2">How It Works</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center mb-8">Upload your SQL schema and get a complete NestJS application</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="step-card text-center">
+                    <div class="bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold mb-2">Parse SQL Schema</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Extract tables, relationships, and constraints</p>
+                </div>
+
+                <div class="step-card text-center">
+                    <div class="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold mb-2">Generate Security</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">JWT authentication with role-based access</p>
+                </div>
+
+                <div class="step-card text-center">
+                    <div class="bg-purple-100 dark:bg-purple-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold mb-2">Create Code</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">TypeORM entities, controllers, and services</p>
+                </div>
+
+                <div class="step-card text-center">
+                    <div class="bg-yellow-100 dark:bg-yellow-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold mb-2">Add Documentation</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">README, Swagger docs, and type definitions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-gray-600 dark:text-gray-400">
+                A tool for the modern developer. Built with ❤️ for the NestJS community.
+            </p>
+        </div>
     </div>
 
     <script>
-        // Dark mode support
+        // Dark mode detection
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
@@ -458,1255 +356,157 @@ CREATE TABLE posts (
             }
         });
 
-        // Global state
-        let generatedFiles = {};
-        let currentFile = 'structure';
-        let generationStats = {};
+        // Toggle switch functionality
+        function setupToggle(toggleId) {
+            const toggle = document.getElementById(toggleId);
+            const slider = toggle.nextElementSibling;
+            
+            function updateToggle() {
+                if (toggle.checked) {
+                    slider.style.backgroundColor = '#5D5CDE';
+                    slider.style.transform = 'translateX(24px)';
+                } else {
+                    slider.style.backgroundColor = '';
+                    slider.style.transform = 'translateX(0)';
+                }
+                updateFeatureCount();
+            }
+            
+            toggle.addEventListener('change', updateToggle);
+            updateToggle();
+        }
 
-        // Initialize UI
-        document.addEventListener('DOMContentLoaded', function() {
-            updateConfigSummary();
-            setupEventListeners();
+        // Initialize toggles
+        ['crudToggle', 'validationToggle', 'swaggerToggle', 'ftpToggle', 'oauthToggle'].forEach(setupToggle);
+
+        // Update feature count
+        function updateFeatureCount() {
+            const toggles = ['crudToggle', 'validationToggle', 'swaggerToggle', 'ftpToggle', 'oauthToggle'];
+            const enabledCount = toggles.filter(id => document.getElementById(id).checked).length;
+            document.getElementById('featureCount').textContent = enabledCount;
+        }
+
+        // Database type selection
+        document.getElementById('dbType').addEventListener('change', function() {
+            document.getElementById('summaryDb').textContent = this.options[this.selectedIndex].text;
         });
 
-        function setupEventListeners() {
-            // Schema input toggles
-            document.getElementById('typeSchemaBtn').addEventListener('click', () => toggleSchemaInput('type'));
-            document.getElementById('uploadSchemaBtn').addEventListener('click', () => toggleSchemaInput('upload'));
-            
-            // File upload
-            document.getElementById('sqlFileInput').addEventListener('change', handleFileUpload);
-            
-            // Drag and drop
-            const uploadArea = document.getElementById('schemaUploadArea');
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.add('border-primary');
-            });
-            uploadArea.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.remove('border-primary');
-            });
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.remove('border-primary');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleFileUpload({ target: { files } });
-                }
-            });
+        // File upload functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
 
-            // Configuration change listeners
-            ['appName', 'dbType', 'includeAuth', 'includeValidation', 'includeSwagger', 'includeDocker', 'includeTesting', 'includeLogger'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.addEventListener('change', updateConfigSummary);
-                }
-            });
+        uploadArea.addEventListener('click', () => fileInput.click());
 
-            // Share and reset buttons
-            document.getElementById('shareBtn').addEventListener('click', shareGenerator);
-            document.getElementById('resetBtn').addEventListener('click', resetConfiguration);
-        }
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
 
-        function toggleSchemaInput(type) {
-            const typeBtn = document.getElementById('typeSchemaBtn');
-            const uploadBtn = document.getElementById('uploadSchemaBtn');
-            const typeArea = document.getElementById('schemaTypeArea');
-            const uploadArea = document.getElementById('schemaUploadArea');
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
 
-            if (type === 'type') {
-                typeBtn.classList.add('bg-white', 'dark:bg-gray-800', 'shadow-sm');
-                typeBtn.classList.remove('text-gray-600', 'dark:text-gray-400');
-                uploadBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow-sm');
-                uploadBtn.classList.add('text-gray-600', 'dark:text-gray-400');
-                typeArea.classList.remove('hidden');
-                uploadArea.classList.add('hidden');
-            } else {
-                uploadBtn.classList.add('bg-white', 'dark:bg-gray-800', 'shadow-sm');
-                uploadBtn.classList.remove('text-gray-600', 'dark:text-gray-400');
-                typeBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow-sm');
-                typeBtn.classList.add('text-gray-600', 'dark:text-gray-400');
-                uploadArea.classList.remove('hidden');
-                typeArea.classList.add('hidden');
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
             }
-        }
+        });
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file && (file.type === 'text/plain' || file.name.endsWith('.sql') || file.name.endsWith('.txt'))) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('sqlSchema').value = e.target.result;
-                    document.getElementById('fileName').textContent = file.name;
-                    document.getElementById('uploadedFileName').classList.remove('hidden');
-                };
-                reader.readAsText(file);
-            } else {
-                alert('Please upload a valid SQL file (.sql or .txt)');
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
             }
+        });
+
+        function handleFile(file) {
+            fileName.textContent = file.name;
+            uploadArea.classList.add('border-primary', 'bg-primary/5');
         }
 
-        function updateConfigSummary() {
-            const config = getConfiguration();
-            const summaryContent = document.getElementById('summaryContent');
+        // Generate application
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const btn = this;
+            const originalText = btn.textContent;
             
-            const features = [];
-            if (config.includeAuth) features.push('🔐 JWT Auth');
-            if (config.includeValidation) features.push('✅ Validation');
-            if (config.includeSwagger) features.push('📚 Swagger');
-            if (config.includeDocker) features.push('🐳 Docker');
-            if (config.includeTesting) features.push('🧪 Testing');
-            if (config.includeLogger) features.push('📝 Logging');
-
-            summaryContent.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <span class="font-medium">📦 App Name:</span>
-                    <span class="text-primary font-mono">${config.appName}</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="font-medium">🗄️ Database:</span>
-                    <span class="text-primary">${getDatabaseLabel(config.dbType)}</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="font-medium">⚙️ Features:</span>
-                    <span class="text-primary">${features.length} enabled</span>
-                </div>
-                <div class="mt-2 pt-2 border-t border-primary/20">
-                    <div class="flex flex-wrap gap-1">
-                        ${features.map(f => `<span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md">${f}</span>`).join('')}
-                    </div>
+            // Show loading state
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+            btn.classList.add('pulse-animation');
+            
+            const outputContent = document.getElementById('outputContent');
+            outputContent.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-gray-600 dark:text-gray-400">Generating your NestJS application...</p>
                 </div>
             `;
-        }
 
-        function getDatabaseLabel(dbType) {
-            const labels = {
-                'postgres': '🐘 PostgreSQL',
-                'mysql': '🐬 MySQL',
-                'mssql': '🏢 SQL Server',
-                'oracle': '🔶 Oracle',
-                'mongodb': '🍃 MongoDB'
-            };
-            return labels[dbType] || dbType;
-        }
+            // Simulate generation process
+            setTimeout(() => {
+                const enabledFeatures = [];
+                if (document.getElementById('crudToggle').checked) enabledFeatures.push('CRUD Operations');
+                if (document.getElementById('validationToggle').checked) enabledFeatures.push('Field Validations');
+                if (document.getElementById('swaggerToggle').checked) enabledFeatures.push('Swagger Documentation');
+                if (document.getElementById('ftpToggle').checked) enabledFeatures.push('FTP Support');
+                if (document.getElementById('oauthToggle').checked) enabledFeatures.push('Google OAuth');
 
-        function getConfiguration() {
-            return {
-                appName: document.getElementById('appName').value,
-                dbType: document.getElementById('dbType').value,
-                includeAuth: document.getElementById('includeAuth').checked,
-                includeValidation: document.getElementById('includeValidation').checked,
-                includeSwagger: document.getElementById('includeSwagger').checked,
-                includeDocker: document.getElementById('includeDocker').checked,
-                includeTesting: document.getElementById('includeTesting').checked,
-                includeLogger: document.getElementById('includeLogger').checked
-            };
-        }
+                const dbType = document.getElementById('dbType').value;
 
-        function shareGenerator() {
-            const config = getConfiguration();
-            const schema = document.getElementById('sqlSchema').value;
-            
-            const shareData = {
-                schema: btoa(schema),
-                config: config
-            };
-            
-            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${btoa(JSON.stringify(shareData))}`;
-            
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                // Show success message
-                const btn = document.getElementById('shareBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Copied!
+                outputContent.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center text-green-600 dark:text-green-400 mb-4">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="font-medium">NestJS Application Generated Successfully!</span>
+                        </div>
+                        
+                        <div class="bg-gray-100 dark:bg-gray-600 rounded-lg p-4">
+                            <h4 class="font-semibold mb-2">📁 Generated Files:</h4>
+                            <ul class="text-sm space-y-1 text-gray-600 dark:text-gray-300">
+                                <li>• src/entities/ - TypeORM entities</li>
+                                <li>• src/controllers/ - REST API controllers</li>
+                                <li>• src/services/ - Business logic services</li>
+                                <li>• src/auth/ - JWT authentication module</li>
+                                <li>• src/dto/ - Data transfer objects</li>
+                                <li>• README.md - Setup instructions</li>
+                                <li>• package.json - Dependencies</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
+                            <h4 class="font-semibold mb-2">🔧 Configuration:</h4>
+                            <ul class="text-sm space-y-1 text-gray-600 dark:text-gray-300">
+                                <li>• Database: ${dbType.toUpperCase()}</li>
+                                <li>• Features: ${enabledFeatures.join(', ')}</li>
+                                <li>• Authentication: JWT + Role-based access</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                            <button class="flex-1 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg transition-colors">
+                                📥 Download ZIP
+                            </button>
+                            <button class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors">
+                                📋 Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
                 `;
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
-            });
-        }
 
-        function resetConfiguration() {
-            document.getElementById('appName').value = 'my-nestjs-app';
-            document.getElementById('dbType').value = 'postgres';
-            document.getElementById('includeAuth').checked = true;
-            document.getElementById('includeValidation').checked = true;
-            document.getElementById('includeSwagger').checked = true;
-            document.getElementById('includeDocker').checked = true;
-            document.getElementById('includeTesting').checked = false;
-            document.getElementById('includeLogger').checked = false;
-            document.getElementById('sqlSchema').value = '';
-            updateConfigSummary();
-        }
-
-        // SQL Parser
-        function parseSQLSchema(schema) {
-            const tables = {};
-            const lines = schema.split('\n');
-            let currentTable = null;
-            let inCreateTable = false;
-
-            for (let line of lines) {
-                line = line.trim();
-                
-                // Match CREATE TABLE
-                const createTableMatch = line.match(/CREATE TABLE\s+(\w+)\s*\(/i);
-                if (createTableMatch) {
-                    currentTable = createTableMatch[1];
-                    tables[currentTable] = {
-                        name: currentTable,
-                        columns: {},
-                        relationships: []
-                    };
-                    inCreateTable = true;
-                    continue;
-                }
-
-                // End of table definition
-                if (inCreateTable && line.includes(');')) {
-                    inCreateTable = false;
-                    currentTable = null;
-                    continue;
-                }
-
-                // Parse columns
-                if (inCreateTable && currentTable && line && !line.startsWith('--')) {
-                    const columnMatch = line.match(/(\w+)\s+([^,\s]+(?:\s*\([^)]+\))?)\s*(.*)/i);
-                    if (columnMatch) {
-                        const [, columnName, dataType, constraints] = columnMatch;
-                        const column = {
-                            name: columnName,
-                            type: dataType.toUpperCase(),
-                            nullable: !constraints.includes('NOT NULL'),
-                            primary: constraints.includes('PRIMARY KEY'),
-                            unique: constraints.includes('UNIQUE'),
-                            default: null
-                        };
-
-                        // Parse default values
-                        const defaultMatch = constraints.match(/DEFAULT\s+([^,\s]+)/i);
-                        if (defaultMatch) {
-                            column.default = defaultMatch[1];
-                        }
-
-                        // Parse foreign keys
-                        const foreignKeyMatch = constraints.match(/REFERENCES\s+(\w+)\((\w+)\)/i);
-                        if (foreignKeyMatch) {
-                            tables[currentTable].relationships.push({
-                                type: 'belongsTo',
-                                table: foreignKeyMatch[1],
-                                foreignKey: columnName,
-                                references: foreignKeyMatch[2]
-                            });
-                        }
-
-                        tables[currentTable].columns[columnName] = column;
-                    }
-                }
-            }
-
-            return tables;
-        }
-
-        // TypeScript type mapping
-        function mapSQLTypeToTypeScript(sqlType) {
-            const typeMap = {
-                'SERIAL': 'number',
-                'INTEGER': 'number',
-                'INT': 'number',
-                'BIGINT': 'number',
-                'DECIMAL': 'number',
-                'NUMERIC': 'number',
-                'REAL': 'number',
-                'DOUBLE': 'number',
-                'FLOAT': 'number',
-                'VARCHAR': 'string',
-                'CHAR': 'string',
-                'TEXT': 'string',
-                'BOOLEAN': 'boolean',
-                'BOOL': 'boolean',
-                'TIMESTAMP': 'Date',
-                'DATETIME': 'Date',
-                'DATE': 'Date',
-                'TIME': 'Date'
-            };
-
-            const baseType = sqlType.split('(')[0].toUpperCase();
-            return typeMap[baseType] || 'string';
-        }
-
-        // Code generators
-        function generateEntity(tableName, table) {
-            const className = pascalCase(tableName);
-            const columns = Object.entries(table.columns);
-            
-            let imports = new Set(['Entity', 'Column']);
-            if (columns.some(([, col]) => col.primary)) imports.add('PrimaryGeneratedColumn');
-            if (table.relationships.length > 0) imports.add('ManyToOne', 'JoinColumn');
-
-            const entityCode = `import { ${Array.from(imports).join(', ')} } from 'typeorm';
-${table.relationships.length > 0 ? `import { ${table.relationships.map(rel => pascalCase(rel.table)).join(', ')} } from './index';` : ''}
-
-@Entity('${tableName}')
-export class ${className} {
-${columns.map(([columnName, column]) => {
-    if (column.primary && column.type.includes('SERIAL')) {
-        return `  @PrimaryGeneratedColumn()
-  ${columnName}: number;`;
-    } else if (column.primary) {
-        return `  @PrimaryGeneratedColumn()
-  ${columnName}: ${mapSQLTypeToTypeScript(column.type)};`;
-    } else {
-        const columnOptions = [];
-        if (!column.nullable) columnOptions.push('nullable: false');
-        if (column.unique) columnOptions.push('unique: true');
-        if (column.default) columnOptions.push(`default: ${column.default}`);
-        
-        const optionsStr = columnOptions.length > 0 ? `{ ${columnOptions.join(', ')} }` : '';
-        return `  @Column(${optionsStr})
-  ${columnName}: ${mapSQLTypeToTypeScript(column.type)};`;
-    }
-}).join('\n\n')}
-
-${table.relationships.map(rel => {
-    return `  @ManyToOne(() => ${pascalCase(rel.table)})
-  @JoinColumn({ name: '${rel.foreignKey}' })
-  ${camelCase(rel.table)}: ${pascalCase(rel.table)};`;
-}).join('\n\n')}
-}`;
-
-            return entityCode;
-        }
-
-        function generateService(tableName, table) {
-            const className = pascalCase(tableName);
-            const serviceName = `${className}Service`;
-            
-            return `import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ${className} } from './entities/${tableName}.entity';
-import { Create${className}Dto } from './dto/create-${tableName}.dto';
-import { Update${className}Dto } from './dto/update-${tableName}.dto';
-
-@Injectable()
-export class ${serviceName} {
-  constructor(
-    @InjectRepository(${className})
-    private ${camelCase(tableName)}Repository: Repository<${className}>,
-  ) {}
-
-  async create(create${className}Dto: Create${className}Dto): Promise<${className}> {
-    const ${camelCase(tableName)} = this.${camelCase(tableName)}Repository.create(create${className}Dto);
-    return this.${camelCase(tableName)}Repository.save(${camelCase(tableName)});
-  }
-
-  async findAll(): Promise<${className}[]> {
-    return this.${camelCase(tableName)}Repository.find();
-  }
-
-  async findOne(id: number): Promise<${className}> {
-    const ${camelCase(tableName)} = await this.${camelCase(tableName)}Repository.findOne({ where: { id } });
-    if (!${camelCase(tableName)}) {
-      throw new NotFoundException(\`${className} with ID \${id} not found\`);
-    }
-    return ${camelCase(tableName)};
-  }
-
-  async update(id: number, update${className}Dto: Update${className}Dto): Promise<${className}> {
-    await this.${camelCase(tableName)}Repository.update(id, update${className}Dto);
-    return this.findOne(id);
-  }
-
-  async remove(id: number): Promise<void> {
-    const result = await this.${camelCase(tableName)}Repository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(\`${className} with ID \${id} not found\`);
-    }
-  }
-}`;
-        }
-
-        function generateController(tableName, table, includeAuth) {
-            const className = pascalCase(tableName);
-            const controllerName = `${className}Controller`;
-            const serviceName = `${className}Service`;
-            
-            const authImports = includeAuth ? `import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';` : '';
-            
-            const authDecorator = includeAuth ? '@UseGuards(JwtAuthGuard)' : '';
-
-            return `import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-${authImports}
-import { ${serviceName} } from './${tableName}.service';
-import { Create${className}Dto } from './dto/create-${tableName}.dto';
-import { Update${className}Dto } from './dto/update-${tableName}.dto';
-
-@ApiTags('${tableName}')
-@Controller('${tableName}')
-${authDecorator}
-export class ${controllerName} {
-  constructor(private readonly ${camelCase(tableName)}Service: ${serviceName}) {}
-
-  @Post()
-  @ApiOperation({ summary: 'Create a new ${tableName}' })
-  @ApiResponse({ status: 201, description: 'The ${tableName} has been successfully created.' })
-  create(@Body() create${className}Dto: Create${className}Dto) {
-    return this.${camelCase(tableName)}Service.create(create${className}Dto);
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Get all ${tableName}' })
-  @ApiResponse({ status: 200, description: 'Return all ${tableName}.' })
-  findAll() {
-    return this.${camelCase(tableName)}Service.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a ${tableName} by id' })
-  @ApiResponse({ status: 200, description: 'Return the ${tableName}.' })
-  @ApiResponse({ status: 404, description: '${className} not found.' })
-  findOne(@Param('id') id: string) {
-    return this.${camelCase(tableName)}Service.findOne(+id);
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a ${tableName}' })
-  @ApiResponse({ status: 200, description: 'The ${tableName} has been successfully updated.' })
-  @ApiResponse({ status: 404, description: '${className} not found.' })
-  update(@Param('id') id: string, @Body() update${className}Dto: Update${className}Dto) {
-    return this.${camelCase(tableName)}Service.update(+id, update${className}Dto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a ${tableName}' })
-  @ApiResponse({ status: 200, description: 'The ${tableName} has been successfully deleted.' })
-  @ApiResponse({ status: 404, description: '${className} not found.' })
-  remove(@Param('id') id: string) {
-    return this.${camelCase(tableName)}Service.remove(+id);
-  }
-}`;
-        }
-
-        function generateDto(tableName, table, type = 'create') {
-            const className = pascalCase(tableName);
-            const dtoName = type === 'create' ? `Create${className}Dto` : `Update${className}Dto`;
-            const columns = Object.entries(table.columns).filter(([, col]) => !col.primary);
-            
-            const imports = new Set(['ApiProperty']);
-            if (type === 'update') imports.add('PartialType');
-
-            const dtoCode = `import { ${Array.from(imports).join(', ')} } from '@nestjs/swagger';
-import { IsString, IsNumber, IsBoolean, IsOptional, IsEmail } from 'class-validator';
-
-export class ${type === 'create' ? dtoName : `Create${className}Dto`} {
-${columns.map(([columnName, column]) => {
-    const tsType = mapSQLTypeToTypeScript(column.type);
-    const isOptional = column.nullable || column.default;
-    const validators = [];
-    
-    if (tsType === 'string') validators.push('IsString()');
-    if (tsType === 'number') validators.push('IsNumber()');
-    if (tsType === 'boolean') validators.push('IsBoolean()');
-    if (columnName.includes('email')) validators.push('IsEmail()');
-    if (isOptional) validators.push('IsOptional()');
-    
-    return `  @ApiProperty({ description: '${columnName}', required: ${!isOptional} })
-  ${validators.map(v => `@${v}`).join('\n  ')}
-  ${columnName}${isOptional ? '?' : ''}: ${tsType};`;
-}).join('\n\n')}
-}
-
-${type === 'update' ? `export class ${dtoName} extends PartialType(Create${className}Dto) {}` : ''}`;
-
-            return dtoCode;
-        }
-
-        function generateModule(tableName, table) {
-            const className = pascalCase(tableName);
-            const moduleName = `${className}Module`;
-            const serviceName = `${className}Service`;
-            const controllerName = `${className}Controller`;
-            
-            return `import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ${serviceName} } from './${tableName}.service';
-import { ${controllerName} } from './${tableName}.controller';
-import { ${className} } from './entities/${tableName}.entity';
-
-@Module({
-  imports: [TypeOrmModule.forFeature([${className}])],
-  controllers: [${controllerName}],
-  providers: [${serviceName}],
-  exports: [${serviceName}],
-})
-export class ${moduleName} {}`;
-        }
-
-        function generateAppModule(tables, config) {
-            const tableNames = Object.keys(tables);
-            const moduleImports = tableNames.map(name => `${pascalCase(name)}Module`);
-            
-            return `import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-${config.includeAuth ? "import { AuthModule } from './auth/auth.module';" : ''}
-${tableNames.map(name => `import { ${pascalCase(name)}Module } from './${name}/${name}.module';`).join('\n')}
-
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRoot({
-      type: '${config.dbType}',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT) || ${config.dbType === 'postgres' ? 5432 : config.dbType === 'mysql' ? 3306 : 0},
-      username: process.env.DB_USERNAME || '${config.dbType === 'postgres' ? 'postgres' : 'root'}',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || '${config.appName}',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV !== 'production',
-    }),
-    ${config.includeAuth ? 'AuthModule,' : ''}
-    ${moduleImports.join(',\n    ')},
-  ],
-})
-export class AppModule {}`;
-        }
-
-        function generatePackageJson(config) {
-            const dbDependency = {
-                'postgres': '"pg": "^8.11.0",',
-                'mysql': '"mysql2": "^3.6.0",',
-                'mssql': '"mssql": "^10.0.1",',
-                'oracle': '"oracledb": "^6.0.0",',
-                'mongodb': '"mongoose": "^8.0.0", "@nestjs/mongoose": "^10.0.0",'
-            };
-
-            const dbDevDependency = {
-                'postgres': '"@types/pg": "^8.10.0",',
-                'mysql': '',
-                'mssql': '',
-                'oracle': '',
-                'mongodb': '"@types/mongoose": "^6.0.0",'
-            };
-
-            return `{
-  "name": "${config.appName}",
-  "version": "0.0.1",
-  "description": "Generated NestJS application with ${getDatabaseLabel(config.dbType).replace(/[🐘🐬🏢🔶🍃]/g, '').trim()}",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "nest build",
-    "format": "prettier --write \\"src/**/*.ts\\" \\"test/**/*.ts\\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint \\"{src,apps,libs,test}/**/*.ts\\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
-  },
-  "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
-    ${config.dbType === 'mongodb' ? '' : '"@nestjs/typeorm": "^10.0.0",'}
-    "@nestjs/config": "^3.0.0",
-    ${config.includeSwagger ? '"@nestjs/swagger": "^7.0.0",' : ''}
-    ${config.includeAuth ? '"@nestjs/jwt": "^10.0.0", "@nestjs/passport": "^10.0.0", "passport": "^0.6.0", "passport-jwt": "^4.0.0", "passport-local": "^1.0.0", "bcrypt": "^5.1.0",' : ''}
-    ${config.includeValidation ? '"class-validator": "^0.14.0", "class-transformer": "^0.5.1",' : ''}
-    ${config.includeLogger ? '"winston": "^3.11.0", "nest-winston": "^1.9.4",' : ''}
-    ${config.dbType === 'mongodb' ? '' : '"typeorm": "^0.3.0",'}
-    ${dbDependency[config.dbType] || '"sqlite3": "^5.1.6",'}
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^5.0.1",
-    "rxjs": "^7.8.1"
-  },
-  "devDependencies": {
-    "@nestjs/cli": "^10.0.0",
-    "@nestjs/schematics": "^10.0.0",
-    "@nestjs/testing": "^10.0.0",
-    ${dbDevDependency[config.dbType] || ''}
-    ${config.includeAuth ? '"@types/bcrypt": "^5.0.0", "@types/passport-jwt": "^3.0.8", "@types/passport-local": "^1.0.35",' : ''}
-    ${config.includeTesting ? '"@types/supertest": "^2.0.12",' : ''}
-    "@types/express": "^4.17.17",
-    "@types/jest": "^29.5.2",
-    "@types/node": "^20.3.1",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.42.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "jest": "^29.5.0",
-    "prettier": "^3.0.0",
-    "source-map-support": "^0.5.21",
-    "supertest": "^6.3.3",
-    "ts-jest": "^29.1.0",
-    "ts-loader": "^9.4.3",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.1",
-    "typescript": "^5.1.3"
-  }
-}`;
-        }
-
-        // Utility functions
-        function pascalCase(str) {
-            return str.replace(/(?:^|_)([a-z])/g, (_, char) => char.toUpperCase());
-        }
-
-        function camelCase(str) {
-            const pascal = pascalCase(str);
-            return pascal.charAt(0).toLowerCase() + pascal.slice(1);
-        }
-
-        // Progress tracking
-        function updateProgress(step) {
-            const steps = ['parse', 'entities', 'controllers', 'auth', 'docs'];
-            const progressItem = document.querySelector(`[data-step="${step}"]`);
-            if (progressItem) {
-                const icon = progressItem.querySelector('svg');
-                if (icon) {
-                    icon.classList.remove('hidden');
-                }
-                const circle = progressItem.querySelector('.step-circle');
-                if (circle) {
-                    circle.classList.add('bg-primary', 'border-primary');
-                }
-                progressItem.classList.add('text-primary');
-            }
-
-            const index = steps.indexOf(step);
-            if (index >= 0) {
-                const percent = ((index + 1) / steps.length) * 100;
-                const bar = document.getElementById('progressBar');
-                if (bar) {
-                    bar.style.width = `${percent}%`;
-                }
-            }
-        }
-
-        // File management
-        function addFileTab(fileName, content) {
-            const tabContainer = document.querySelector('.flex.space-x-2.mb-4');
-            const existingTab = document.querySelector(`[data-file="${fileName}"]`);
-            
-            if (!existingTab) {
-                const tab = document.createElement('button');
-                tab.className = 'file-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-300 dark:hover:bg-gray-600';
-                tab.textContent = fileName;
-                tab.setAttribute('data-file', fileName);
-                tabContainer.appendChild(tab);
-                
-                tab.addEventListener('click', () => showFile(fileName));
-            }
-            
-            generatedFiles[fileName] = content;
-        }
-
-        function showFile(fileName) {
-            // Update active tab
-            document.querySelectorAll('.file-tab').forEach(tab => {
-                tab.classList.remove('active', 'bg-primary', 'text-white');
-                tab.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            });
-            
-            const activeTab = document.querySelector(`[data-file="${fileName}"]`);
-            if (activeTab) {
-                activeTab.classList.add('active', 'bg-primary', 'text-white');
-                activeTab.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            }
-            
-            // Show content
-            const codeElement = document.getElementById('generatedCode');
-            const fileTree = document.getElementById('fileTree');
-            const successState = document.getElementById('successState');
-            
-            if (fileName === 'structure') {
-                fileTree.classList.remove('hidden');
-                document.getElementById('codeOutput').classList.add('hidden');
-                successState.classList.add('hidden');
-            } else {
-                fileTree.classList.add('hidden');
-                successState.classList.add('hidden');
-                document.getElementById('codeOutput').classList.remove('hidden');
-                codeElement.textContent = generatedFiles[fileName] || '';
-                Prism.highlightElement(codeElement);
-            }
-            
-            currentFile = fileName;
-        }
-
-        function showSuccessState() {
-            const loadingEl = document.getElementById('loadingState');
-            if (loadingEl) {
-                loadingEl.classList.add('hidden');
-            }
-            const successEl = document.getElementById('successState');
-            if (successEl) {
-                successEl.classList.remove('hidden');
-            }
-            const codeOutputEl = document.getElementById('codeOutput');
-            if (codeOutputEl) {
-                codeOutputEl.classList.add('hidden');
-            }
-            const fileTreeEl = document.getElementById('fileTree');
-            if (fileTreeEl) {
-                fileTreeEl.classList.add('hidden');
-            }
-
-            // Update stats
-            const statsContainer = document.getElementById('generationStats');
-            statsContainer.innerHTML = `
-                <div class="text-center">
-                    <div class="text-lg font-bold text-gray-700 dark:text-gray-300">${generationStats.totalFiles}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Files Generated</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-lg font-bold text-gray-700 dark:text-gray-300">${generationStats.entities}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Database Entities</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-lg font-bold text-gray-700 dark:text-gray-300">${generationStats.endpoints}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">API Endpoints</div>
-                </div>
-            `;
-
-            // Show file tabs
-            showFile('structure');
-        }
-
-        function generateEnvExample(config) {
-            const dbConfig = {
-                'postgres': `DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=password
-DB_NAME=${config.appName}`,
-                'mysql': `DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=root
-DB_PASSWORD=password
-DB_NAME=${config.appName}`,
-                'mssql': `DB_HOST=localhost
-DB_PORT=1433
-DB_USERNAME=sa
-DB_PASSWORD=YourPassword123
-DB_NAME=${config.appName}`,
-                'oracle': `DB_HOST=localhost
-DB_PORT=1521
-DB_USERNAME=system
-DB_PASSWORD=password
-DB_NAME=${config.appName}`,
-                'mongodb': `MONGODB_URI=mongodb://localhost:27017/${config.appName}`
-            };
-
-            return `# Application
-NODE_ENV=development
-PORT=3000
-
-# Database
-${dbConfig[config.dbType]}
-
-${config.includeAuth ? `# JWT
-JWT_SECRET=your-super-secret-jwt-key-here
-JWT_EXPIRES_IN=7d` : ''}
-
-${config.includeLogger ? `# Logging
-LOG_LEVEL=info` : ''}
-
-# CORS
-CORS_ORIGIN=http://localhost:3000`;
-        }
-
-        function generateReadme(tables, config) {
-            const tableNames = Object.keys(tables);
-            const features = [];
-            if (config.includeAuth) features.push('🔐 JWT Authentication');
-            if (config.includeValidation) features.push('✅ Input Validation');
-            if (config.includeSwagger) features.push('📚 Swagger Documentation');
-            if (config.includeDocker) features.push('🐳 Docker Support');
-            if (config.includeTesting) features.push('🧪 Unit Testing');
-            if (config.includeLogger) features.push('📝 Winston Logging');
-
-            return `# ${config.appName}
-
-A production-ready NestJS application generated with advanced features and ${getDatabaseLabel(config.dbType).replace(/[🐘🐬🏢🔶🍃]/g, '').trim()} database integration.
-
-## 🚀 Features
-
-${features.map(f => `- ${f}`).join('\n')}
-
-## 📊 Database Entities
-
-${tableNames.map(name => `- **${pascalCase(name)}** - Complete CRUD operations`).join('\n')}
-
-## 🛠️ Installation
-
-\`\`\`bash
-# Install dependencies
-npm install
-
-# Copy environment variables
-cp .env.example .env
-
-# Edit your environment variables
-# Update database connection details in .env
-\`\`\`
-
-## 🗄️ Database Setup
-
-### ${getDatabaseLabel(config.dbType).replace(/[🐘🐬🏢🔶🍃]/g, '').trim()}
-
-${config.dbType === 'postgres' ? `\`\`\`bash
-# Create database
-createdb ${config.appName}
-\`\`\`` : ''}
-
-${config.dbType === 'mysql' ? `\`\`\`sql
-CREATE DATABASE ${config.appName};
-\`\`\`` : ''}
-
-${config.dbType === 'mongodb' ? `\`\`\`bash
-# MongoDB will create the database automatically
-\`\`\`` : ''}
-
-## 🏃‍♂️ Running the Application
-
-\`\`\`bash
-# Development
-npm run start:dev
-
-# Production build
-npm run build
-npm run start:prod
-\`\`\`
-
-## 📚 API Documentation
-
-${config.includeSwagger ? `Visit \`http://localhost:3000/api\` for Swagger documentation when the server is running.` : 'API documentation can be added with Swagger.'}
-
-## 🧪 Testing
-
-${config.includeTesting ? `\`\`\`bash
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-
-# Test coverage
-npm run test:cov
-\`\`\`` : 'Testing setup can be added with Jest and Supertest.'}
-
-## 🐳 Docker
-
-${config.includeDocker ? `\`\`\`bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Run in background
-docker-compose up -d
-\`\`\`` : 'Docker configuration can be added for containerization.'}
-
-## 📝 API Endpoints
-
-${tableNames.map(name => `### ${pascalCase(name)}
-- \`GET /${name}\` - Get all ${name}
-- \`GET /${name}/:id\` - Get ${name} by ID
-- \`POST /${name}\` - Create new ${name}
-- \`PATCH /${name}/:id\` - Update ${name}
-- \`DELETE /${name}/:id\` - Delete ${name}`).join('\n\n')}
-
-${config.includeAuth ? `### Authentication
-- \`POST /auth/login\` - User login
-- \`POST /auth/register\` - User registration` : ''}
-
-## 🏗️ Project Structure
-
-\`\`\`
-src/
-├── app.module.ts          # Root application module
-├── main.ts               # Application entry point
-${config.includeAuth ? '├── auth/                # Authentication module' : ''}
-${tableNames.map(name => `├── ${name}/               # ${pascalCase(name)} module`).join('\n')}
-\`\`\`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (\`git checkout -b feature/amazing-feature\`)
-3. Commit your changes (\`git commit -m 'Add some amazing feature'\`)
-4. Push to the branch (\`git push origin feature/amazing-feature\`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.`;
-        }
-
-        function generateDockerfile(config) {
-            return `# Build stage
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy source code
-COPY . .
-
-# Build application
-RUN npm run build
-
-# Production stage
-FROM node:18-alpine AS production
-
-WORKDIR /app
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nestjs -u 1001
-
-# Copy built application
-COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/package*.json ./
-
-# Switch to non-root user
-USER nestjs
-
-# Expose port
-EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \\
-  CMD curl -f http://localhost:3000/health || exit 1
-
-# Start application
-CMD ["node", "dist/main"]`;
-        }
-
-        function generateDockerCompose(config) {
-            const dbService = {
-                'postgres': `  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: ${config.appName}
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data`,
-                'mysql': `  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: ${config.appName}
-      MYSQL_ROOT_PASSWORD: password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql`,
-                'mongodb': `  mongodb:
-    image: mongo:7.0
-    environment:
-      MONGO_INITDB_DATABASE: ${config.appName}
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db`
-            };
-
-            const volumes = {
-                'postgres': 'postgres_data:',
-                'mysql': 'mysql_data:',
-                'mongodb': 'mongodb_data:'
-            };
-
-            return `version: '3.8'
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
-      ${config.dbType === 'postgres' ? 'DB_HOST: postgres' : config.dbType === 'mysql' ? 'DB_HOST: mysql' : 'MONGODB_URI: mongodb://mongodb:27017/' + config.appName}
-    depends_on:
-      - ${config.dbType === 'mongodb' ? 'mongodb' : config.dbType}
-    restart: unless-stopped
-
-${dbService[config.dbType] || dbService.postgres}
-
-volumes:
-  ${volumes[config.dbType] || volumes.postgres}`;
-        }
-
-        function generateProjectStructure(tables, config) {
-            const tableNames = Object.keys(tables);
-            
-            return `${config.appName}/
-├── 📁 src/
-│   ├── 📄 app.module.ts
-│   ├── 📄 main.ts
-│   ${config.includeLogger ? '├── 📄 logger.config.ts' : ''}
-${config.includeAuth ? `│   ├── 📁 auth/
-│   │   ├── 📄 auth.module.ts
-│   │   ├── 📄 auth.service.ts
-│   │   ├── 📄 auth.controller.ts
-│   │   ├── 📄 jwt-auth.guard.ts
-│   │   ├── 📄 local-auth.guard.ts
-│   │   ${config.includeTesting ? '├── 📄 auth.service.spec.ts' : ''}
-│   │   └── 📁 strategies/
-│   │       ├── 📄 jwt.strategy.ts
-│   │       └── 📄 local.strategy.ts` : ''}
-${tableNames.map(name => `│   ├── 📁 ${name}/
-│   │   ├── 📄 ${name}.module.ts
-│   │   ├── 📄 ${name}.service.ts
-│   │   ├── 📄 ${name}.controller.ts
-│   │   ${config.includeTesting ? `├── 📄 ${name}.service.spec.ts` : ''}
-│   │   ${config.includeTesting ? `├── 📄 ${name}.controller.spec.ts` : ''}
-│   │   ├── 📁 entities/
-│   │   │   └── 📄 ${name}.entity.ts
-│   │   └── 📁 dto/
-│   │       ├── 📄 create-${name}.dto.ts
-│   │       └── 📄 update-${name}.dto.ts`).join('\n')}
-${config.includeTesting ? `├── 📁 test/
-│   ├── 📄 app.e2e-spec.ts
-│   └── 📄 jest-e2e.json` : ''}
-├── 📄 package.json
-├── 📄 tsconfig.json
-├── 📄 nest-cli.json
-├── 📄 .env.example
-├── 📄 .gitignore
-├── 📄 README.md
-${config.includeDocker ? `├── 🐳 Dockerfile
-└── 🐳 docker-compose.yml` : ''}`;
-        }
-
-        // Main generation function
-        async function generateNestJSApp() {
-            const sqlSchema = document.getElementById('sqlSchema').value.trim();
-            const config = {
-                appName: document.getElementById('appName').value,
-                dbType: document.getElementById('dbType').value,
-                includeAuth: document.getElementById('includeAuth').checked,
-                includeValidation: document.getElementById('includeValidation').checked,
-                includeSwagger: document.getElementById('includeSwagger').checked,
-                includeDocker: document.getElementById('includeDocker').checked
-            };
-
-            if (!sqlSchema) {
-                alert('Please enter a SQL schema');
-                return;
-            }
-
-            // Show progress
-            const progressContainer = document.getElementById('progressContainer');
-            if (progressContainer) {
-                progressContainer.classList.remove('hidden');
-            }
-            const loadingStateEl = document.getElementById('loadingState');
-            if (loadingStateEl) {
-                loadingStateEl.classList.add('hidden');
-            }
-            
-            // Reset progress
-            document.querySelectorAll('.progress-item').forEach(item => {
-                if (item) {
-                    item.classList.remove('text-primary');
-                    const icon = item.querySelector('svg');
-                    if (icon) {
-                        icon.classList.add('hidden');
-                    }
-                }
-            });
-
-            try {
-                // Parse schema
-                updateProgress('parse');
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                const tables = parseSQLSchema(sqlSchema);
-                
-                if (Object.keys(tables).length === 0) {
-                    throw new Error('No tables found in the SQL schema');
-                }
-
-                // Generate entities
-                updateProgress('entities');
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Clear previous files
-                generatedFiles = {};
-                document.querySelectorAll('.file-tab:not([data-file="structure"])').forEach(tab => tab.remove());
-
-                // Generate project structure
-                const structure = generateProjectStructure(tables, config);
-                addFileTab('structure', structure);
-                document.getElementById('fileTree').innerHTML = `<pre class="text-green-400">${structure}</pre>`;
-
-                // Generate files for each table
-                for (const [tableName, table] of Object.entries(tables)) {
-                    // Entity
-                    addFileTab(`src/${tableName}/entities/${tableName}.entity.ts`, generateEntity(tableName, table));
-                    
-                    // Service
-                    addFileTab(`src/${tableName}/${tableName}.service.ts`, generateService(tableName, table));
-                    
-                    // Controller
-                    addFileTab(`src/${tableName}/${tableName}.controller.ts`, generateController(tableName, table, config.includeAuth));
-                    
-                    // DTOs
-                    addFileTab(`src/${tableName}/dto/create-${tableName}.dto.ts`, generateDto(tableName, table, 'create'));
-                    addFileTab(`src/${tableName}/dto/update-${tableName}.dto.ts`, generateDto(tableName, table, 'update'));
-                    
-                    // Module
-                    addFileTab(`src/${tableName}/${tableName}.module.ts`, generateModule(tableName, table));
-                }
-
-                // Generate controllers & services
-                updateProgress('controllers');
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Generate app module
-                addFileTab('src/app.module.ts', generateAppModule(tables, config));
-
-                // Generate package.json
-                addFileTab('package.json', generatePackageJson(config));
-
-                // Auth setup
-                if (config.includeAuth) {
-                    updateProgress('auth');
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    // Add auth files here
-                }
-
-                // Documentation
-                updateProgress('docs');
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Generate additional files
-                addFileTab('.env.example', generateEnvExample(config));
-                addFileTab('README.md', generateReadme(tables, config));
-                
-                if (config.includeDocker) {
-                    addFileTab('Dockerfile', generateDockerfile(config));
-                    addFileTab('docker-compose.yml', generateDockerCompose(config));
-                }
-
-                // Calculate stats
-                generationStats = {
-                    totalFiles: Object.keys(generatedFiles).length - 1, // Exclude structure
-                    entities: Object.keys(tables).length,
-                    endpoints: Object.keys(tables).length * 5, // CRUD operations
-                    features: [config.includeAuth, config.includeValidation, config.includeSwagger, config.includeDocker, config.includeTesting, config.includeLogger].filter(Boolean).length
-                };
-
-                // Show success state
-                showSuccessState();
-                document.getElementById('downloadZipBtn').disabled = false;
-
-            } catch (error) {
-                console.error('Generation error:', error);
-                const loadingEl = document.getElementById('loadingState');
-                if (loadingEl) {
-                    loadingEl.classList.remove('hidden');
-                    loadingEl.innerHTML = `
-                    <div class="p-8 text-center text-red-500">
-                        <svg class="w-8 h-8 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <p>Error: ${error.message}</p>
-                    </div>
-                    `;
-                }
-                const progressContainer = document.getElementById('progressContainer');
-                if (progressContainer) {
-                    progressContainer.classList.add('hidden');
-                }
-            }
-        }
-
-        // Event listeners
-        document.getElementById('generateBtn').addEventListener('click', generateNestJSApp);
-
-
-        document.getElementById('downloadZipBtn').addEventListener('click', async () => {
-            const appName = document.getElementById('appName').value;
-            const zip = new JSZip();
-
-            const instructions =
-                `${'='.repeat(100)}\n` +
-                `🚀 INSTALLATION INSTRUCTIONS\n` +
-                `${'='.repeat(100)}\n\n` +
-                `1. Create a new directory: mkdir ${appName}\n` +
-                `2. Navigate to directory: cd ${appName}\n` +
-                `3. Extract and organize files according to the project structure above\n` +
-                `4. Install dependencies: npm install\n` +
-                `5. Copy .env.example to .env and configure your database\n` +
-                `6. Run the application: npm run start:dev\n\n` +
-                `📚 Check README.md for detailed setup instructions\n`;
-
-            zip.comment = instructions;
-
-            // Add project structure
-            zip.file('PROJECT_STRUCTURE.txt', generatedFiles['structure'] || '');
-
-            // Add generated files with folder structure
-            for (const [fileName, fileContent] of Object.entries(generatedFiles)) {
-                if (fileName !== 'structure') {
-                    const parts = fileName.split('/');
-                    let folder = zip;
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        folder = folder.folder(parts[i]);
-                    }
-                    folder.file(parts[parts.length - 1], fileContent);
-                }
-            }
-
-            const content = await zip.generateAsync({ type: 'blob' });
-            const url = URL.createObjectURL(content);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${appName}-complete-application.zip`;
-            a.click();
-            URL.revokeObjectURL(url);
-            document.querySelectorAll('.file-tab:not([data-file="structure"])').forEach(tab => tab.remove());
-            showFile("structure");
+                // Reset button
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.classList.remove('pulse-animation');
+            }, 3000);
         });
 
-        // Initialize with project structure tab
-        showFile('structure');
+        // Initialize feature count
+        updateFeatureCount();
     </script>
-
-    <footer class="bg-gray-100 dark:bg-gray-800 py-6 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
-            © 2024 NestJS Generator. All rights reserved.
-        </div>
-    </footer>
-
-</body></html>
+</body>
+</html>
