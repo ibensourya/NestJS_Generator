@@ -1690,7 +1690,7 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             a.download = `${appName}-complete-application.zip`;
             a.click();
             URL.revokeObjectURL(url);
-            document.querySelectorAll(".file-tab:not([data-file="structure"])").forEach(tab => tab.remove());
+            document.querySelectorAll('.file-tab:not([data-file="structure"])').forEach(tab => tab.remove());
             showFile("structure");
         });
 
