@@ -5,6 +5,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -19,8 +20,14 @@
         }
     </script>
 </head>
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+    <header class="bg-primary text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <span class="font-semibold text-lg">NestJS Generator</span>
+            <a href="https://github.com" target="_blank" class="hover:underline text-sm">GitHub</a>
+        </div>
+    </header>
+    <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow">
         <!-- Header -->
         <div class="text-center mb-12">
             <div class="flex items-center justify-center mb-6">
@@ -286,12 +293,12 @@ CREATE TABLE posts (
 
             <!-- Output Section -->
             <div class="space-y-6">
-                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg">
-                    <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+                <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg">
+                    <div class="p-6 bg-primary text-white flex items-center justify-between">
                         <h2 class="text-2xl font-bold flex items-center justify-between">
                             <span class="flex items-center">
-                                <div class="bg-primary/10 p-2 rounded-lg mr-3">
-                                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="bg-white/20 p-2 rounded-lg mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                                     </svg>
                                 </div>
@@ -385,47 +392,57 @@ CREATE TABLE posts (
 
                 <!-- Progress Indicator -->
                 <div id="progressContainer" class="hidden bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold mb-4">Generation Progress</h3>
-                    <div class="space-y-3">
-                        <div class="progress-item" data-step="parse">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
-                                    <div class="w-3 h-3 rounded-full bg-primary hidden"></div>
-                                </div>
-                                <span>Parsing SQL Schema</span>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+                        </svg>
+                        Generation Progress
+                    </h3>
+                    <ol class="space-y-3">
+                        <li class="progress-item flex items-center" data-step="parse">
+                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                        </div>
-                        <div class="progress-item" data-step="entities">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
-                                    <div class="w-3 h-3 rounded-full bg-primary hidden"></div>
-                                </div>
-                                <span>Generating Entities</span>
+                            <span>Parsing SQL Schema</span>
+                        </li>
+                        <li class="progress-item flex items-center" data-step="entities">
+                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                        </div>
-                        <div class="progress-item" data-step="controllers">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
-                                    <div class="w-3 h-3 rounded-full bg-primary hidden"></div>
-                                </div>
-                                <span>Creating Controllers &amp; Services</span>
+                            <span>Generating Entities</span>
+                        </li>
+                        <li class="progress-item flex items-center" data-step="controllers">
+                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                        </div>
-                        <div class="progress-item" data-step="auth">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
-                                    <div class="w-3 h-3 rounded-full bg-primary hidden"></div>
-                                </div>
-                                <span>Setting up Authentication</span>
+                            <span>Creating Controllers &amp; Services</span>
+                        </li>
+                        <li class="progress-item flex items-center" data-step="auth">
+                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                        </div>
-                        <div class="progress-item" data-step="docs">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
-                                    <div class="w-3 h-3 rounded-full bg-primary hidden"></div>
-                                </div>
-                                <span>Generating Documentation</span>
+                            <span>Setting up Authentication</span>
+                        </li>
+                        <li class="progress-item flex items-center" data-step="docs">
+                            <div class="step-circle w-6 h-6 mr-3 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
+                            <span>Generating Documentation</span>
+                        </li>
+                    </ol>
+                    <div class="mt-6">
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                            <div id="progressBar" class="h-full bg-primary transition-all" style="width:0%"></div>
                         </div>
                     </div>
                 </div>
@@ -1065,11 +1082,20 @@ export class AppModule {}`;
 
         // Progress tracking
         function updateProgress(step) {
+            const steps = ['parse', 'entities', 'controllers', 'auth', 'docs'];
             const progressItem = document.querySelector(`[data-step="${step}"]`);
             if (progressItem) {
-                const indicator = progressItem.querySelector('.w-3');
-                indicator.classList.remove('hidden');
+                const icon = progressItem.querySelector('svg');
+                icon.classList.remove('hidden');
+                const circle = progressItem.querySelector('.step-circle');
+                circle.classList.add('bg-primary', 'border-primary');
                 progressItem.classList.add('text-primary');
+            }
+
+            const index = steps.indexOf(step);
+            if (index >= 0) {
+                const percent = ((index + 1) / steps.length) * 100;
+                document.getElementById('progressBar').style.width = `${percent}%`;
             }
         }
 
@@ -1623,47 +1649,38 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
         });
 
         document.getElementById('downloadZipBtn').addEventListener('click', async () => {
-            // Create a simple ZIP-like structure as text
             const appName = document.getElementById('appName').value;
-            let zipContent = `# ${appName} - Complete NestJS Application Package\n`;
-            zipContent += `# Generated on ${new Date().toISOString()}\n`;
-            zipContent += `# Total Files: ${Object.keys(generatedFiles).length - 1}\n\n`;
-            
-            // Add file structure
-            zipContent += `${'='.repeat(100)}\n`;
-            zipContent += `PROJECT STRUCTURE\n`;
-            zipContent += `${'='.repeat(100)}\n\n`;
-            zipContent += generatedFiles['structure'] || '';
-            zipContent += '\n\n';
-            
-            // Add all files
+            const zip = new JSZip();
+
+            const instructions =
+                `${'='.repeat(100)}\n` +
+                `🚀 INSTALLATION INSTRUCTIONS\n` +
+                `${'='.repeat(100)}\n\n` +
+                `1. Create a new directory: mkdir ${appName}\n` +
+                `2. Navigate to directory: cd ${appName}\n` +
+                `3. Extract and organize files according to the project structure above\n` +
+                `4. Install dependencies: npm install\n` +
+                `5. Copy .env.example to .env and configure your database\n` +
+                `6. Run the application: npm run start:dev\n\n` +
+                `📚 Check README.md for detailed setup instructions\n`;
+
+            zip.comment = instructions;
+
+            // Add project structure
+            zip.file('PROJECT_STRUCTURE.txt', generatedFiles['structure'] || '');
+
+            // Add generated files
             for (const [fileName, fileContent] of Object.entries(generatedFiles)) {
                 if (fileName !== 'structure') {
-                    zipContent += `${'='.repeat(100)}\n`;
-                    zipContent += `📁 FILE: ${fileName}\n`;
-                    zipContent += `${'='.repeat(100)}\n\n`;
-                    zipContent += fileContent;
-                    zipContent += '\n\n\n';
+                    zip.file(fileName, fileContent);
                 }
             }
-            
-            // Add installation instructions
-            zipContent += `${'='.repeat(100)}\n`;
-            zipContent += `🚀 INSTALLATION INSTRUCTIONS\n`;
-            zipContent += `${'='.repeat(100)}\n\n`;
-            zipContent += `1. Create a new directory: mkdir ${appName}\n`;
-            zipContent += `2. Navigate to directory: cd ${appName}\n`;
-            zipContent += `3. Extract and organize files according to the project structure above\n`;
-            zipContent += `4. Install dependencies: npm install\n`;
-            zipContent += `5. Copy .env.example to .env and configure your database\n`;
-            zipContent += `6. Run the application: npm run start:dev\n\n`;
-            zipContent += `📚 Check README.md for detailed setup instructions\n`;
-            
-            const blob = new Blob([zipContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
+
+            const content = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(content);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${appName}-complete-application.zip.txt`;
+            a.download = `${appName}-complete-application.zip`;
             a.click();
             URL.revokeObjectURL(url);
         });
@@ -1672,5 +1689,10 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
         showFile('structure');
     </script>
 
+    <footer class="bg-gray-100 dark:bg-gray-800 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            © 2024 NestJS Generator. All rights reserved.
+        </div>
+    </footer>
 
 </body></html>
