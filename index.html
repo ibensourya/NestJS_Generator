@@ -69,7 +69,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="grid lg:grid-cols-3 gap-8">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Input Section -->
             <div class="space-y-6">
                 <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg">
@@ -378,7 +378,7 @@ CREATE TABLE posts (
                                     📦 Download Application
                                 </button>
                             </div>
-                            <div id="generationStats" class="grid grid-cols-3 gap-4 text-sm">
+                            <div id="generationStats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                                 <!-- Stats will be populated by JavaScript -->
                             </div>
                         </div>
@@ -1517,7 +1517,10 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             // Reset progress
             document.querySelectorAll('.progress-item').forEach(item => {
                 item.classList.remove('text-primary');
-                item.querySelector('.w-3').classList.add('hidden');
+                const icon = item.querySelector('svg');
+                if (icon) {
+                    icon.classList.add('hidden');
+                }
             });
 
             try {
