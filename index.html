@@ -199,7 +199,7 @@ CREATE TABLE posts (
                                 Features &amp; Integrations
                             </h4>
                             
-                            <div class="grid grid-cols-1 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <label class="flex items-center p-3 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                                     <input type="checkbox" id="includeAuth" checked="" class="mr-3 text-primary focus:ring-primary rounded">
                                     <div class="flex-1">
@@ -1517,9 +1517,13 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             // Reset progress
             document.querySelectorAll('.progress-item').forEach(item => {
                 item.classList.remove('text-primary');
-                const icon = item.querySelector('svg');
+                const icon = item.querySelector('.step-circle svg');
                 if (icon) {
                     icon.classList.add('hidden');
+                }
+                const circle = item.querySelector('.step-circle');
+                if (circle) {
+                    circle.classList.remove('bg-primary', 'border-primary');
                 }
             });
 
