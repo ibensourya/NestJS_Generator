@@ -1494,14 +1494,14 @@ volumes:
 ├── 📁 src/
 │   ├── 📄 app.module.ts
 │   ├── 📄 main.ts
-│   ${config.includeLogger ? '├── 📄 logger.config.ts' : ''}
+${config.includeLogger ? '│   ├── 📄 logger.config.ts\n' : ''}
 ${config.includeAuth ? `│   ├── 📁 auth/
 │   │   ├── 📄 auth.module.ts
 │   │   ├── 📄 auth.service.ts
 │   │   ├── 📄 auth.controller.ts
 │   │   ├── 📄 jwt-auth.guard.ts
 │   │   ├── 📄 local-auth.guard.ts
-│   │   ${config.includeTesting ? '├── 📄 auth.service.spec.ts' : ''}
+${config.includeTesting ? '│   │   ├── 📄 auth.service.spec.ts\n' : ''}
 │   │   └── 📁 strategies/
 │   │       ├── 📄 jwt.strategy.ts
 │   │       └── 📄 local.strategy.ts` : ''}
@@ -1509,16 +1509,14 @@ ${tableNames.map(name => `│   ├── 📁 ${name}/
 │   │   ├── 📄 ${name}.module.ts
 │   │   ├── 📄 ${name}.service.ts
 │   │   ├── 📄 ${name}.controller.ts
-│   │   ${config.includeTesting ? `├── 📄 ${name}.service.spec.ts` : ''}
-│   │   ${config.includeTesting ? `├── 📄 ${name}.controller.spec.ts` : ''}
+${config.includeTesting ? `│   │   ├── 📄 ${name}.service.spec.ts\n` : ''}
+${config.includeTesting ? `│   │   ├── 📄 ${name}.controller.spec.ts\n` : ''}
 │   │   ├── 📁 entities/
 │   │   │   └── 📄 ${name}.entity.ts
 │   │   └── 📁 dto/
 │   │       ├── 📄 create-${name}.dto.ts
 │   │       └── 📄 update-${name}.dto.ts`).join('\n')}
-${config.includeTesting ? `├── 📁 test/
-│   ├── 📄 app.e2e-spec.ts
-│   └── 📄 jest-e2e.json` : ''}
+${config.includeTesting ? `├── 📁 test/\n│   ├── 📄 app.e2e-spec.ts\n│   └── 📄 jest-e2e.json\n` : ''}
 ├── 📄 package.json
 ├── 📄 tsconfig.json
 ├── 📄 nest-cli.json
