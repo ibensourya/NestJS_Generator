@@ -1572,20 +1572,20 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
                 // Generate files for each table
                 for (const [tableName, table] of Object.entries(tables)) {
                     // Entity
-                    addFileTab(`${tableName}.entity.ts`, generateEntity(tableName, table));
+                    addFileTab(`src/${tableName}/entities/${tableName}.entity.ts`, generateEntity(tableName, table));
                     
                     // Service
-                    addFileTab(`${tableName}.service.ts`, generateService(tableName, table));
+                    addFileTab(`src/${tableName}/${tableName}.service.ts`, generateService(tableName, table));
                     
                     // Controller
-                    addFileTab(`${tableName}.controller.ts`, generateController(tableName, table, config.includeAuth));
+                    addFileTab(`src/${tableName}/${tableName}.controller.ts`, generateController(tableName, table, config.includeAuth));
                     
                     // DTOs
-                    addFileTab(`create-${tableName}.dto.ts`, generateDto(tableName, table, 'create'));
-                    addFileTab(`update-${tableName}.dto.ts`, generateDto(tableName, table, 'update'));
+                    addFileTab(`src/${tableName}/dto/create-${tableName}.dto.ts`, generateDto(tableName, table, 'create'));
+                    addFileTab(`src/${tableName}/dto/update-${tableName}.dto.ts`, generateDto(tableName, table, 'update'));
                     
                     // Module
-                    addFileTab(`${tableName}.module.ts`, generateModule(tableName, table));
+                    addFileTab(`src/${tableName}/${tableName}.module.ts`, generateModule(tableName, table));
                 }
 
                 // Generate controllers & services
@@ -1593,7 +1593,7 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 // Generate app module
-                addFileTab('app.module.ts', generateAppModule(tables, config));
+                addFileTab('src/app.module.ts', generateAppModule(tables, config));
 
                 // Generate package.json
                 addFileTab('package.json', generatePackageJson(config));
@@ -1676,10 +1676,15 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             // Add project structure
             zip.file('PROJECT_STRUCTURE.txt', generatedFiles['structure'] || '');
 
-            // Add generated files
+            // Add generated files with folder structure
             for (const [fileName, fileContent] of Object.entries(generatedFiles)) {
                 if (fileName !== 'structure') {
-                    zip.file(fileName, fileContent);
+                    const parts = fileName.split('/');
+                    let folder = zip;
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        folder = folder.folder(parts[i]);
+                    }
+                    folder.file(parts[parts.length - 1], fileContent);
                 }
             }
 
