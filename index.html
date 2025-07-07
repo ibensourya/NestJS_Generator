@@ -1086,16 +1086,23 @@ export class AppModule {}`;
             const progressItem = document.querySelector(`[data-step="${step}"]`);
             if (progressItem) {
                 const icon = progressItem.querySelector('svg');
-                icon.classList.remove('hidden');
+                if (icon) {
+                    icon.classList.remove('hidden');
+                }
                 const circle = progressItem.querySelector('.step-circle');
-                circle.classList.add('bg-primary', 'border-primary');
+                if (circle) {
+                    circle.classList.add('bg-primary', 'border-primary');
+                }
                 progressItem.classList.add('text-primary');
             }
 
             const index = steps.indexOf(step);
             if (index >= 0) {
                 const percent = ((index + 1) / steps.length) * 100;
-                document.getElementById('progressBar').style.width = `${percent}%`;
+                const bar = document.getElementById('progressBar');
+                if (bar) {
+                    bar.style.width = `${percent}%`;
+                }
             }
         }
 
@@ -1151,10 +1158,22 @@ export class AppModule {}`;
         }
 
         function showSuccessState() {
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('successState').classList.remove('hidden');
-            document.getElementById('codeOutput').classList.add('hidden');
-            document.getElementById('fileTree').classList.add('hidden');
+            const loadingEl = document.getElementById('loadingState');
+            if (loadingEl) {
+                loadingEl.classList.add('hidden');
+            }
+            const successEl = document.getElementById('successState');
+            if (successEl) {
+                successEl.classList.remove('hidden');
+            }
+            const codeOutputEl = document.getElementById('codeOutput');
+            if (codeOutputEl) {
+                codeOutputEl.classList.add('hidden');
+            }
+            const fileTreeEl = document.getElementById('fileTree');
+            if (fileTreeEl) {
+                fileTreeEl.classList.add('hidden');
+            }
 
             // Update stats
             const statsContainer = document.getElementById('generationStats');
@@ -1511,15 +1530,23 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             }
 
             // Show progress
-            document.getElementById('progressContainer').classList.remove('hidden');
-            document.getElementById('loadingState').classList.add('hidden');
+            const progressContainer = document.getElementById('progressContainer');
+            if (progressContainer) {
+                progressContainer.classList.remove('hidden');
+            }
+            const loadingStateEl = document.getElementById('loadingState');
+            if (loadingStateEl) {
+                loadingStateEl.classList.add('hidden');
+            }
             
             // Reset progress
             document.querySelectorAll('.progress-item').forEach(item => {
-                item.classList.remove('text-primary');
-                const icon = item.querySelector('svg');
-                if (icon) {
-                    icon.classList.add('hidden');
+                if (item) {
+                    item.classList.remove('text-primary');
+                    const icon = item.querySelector('svg');
+                    if (icon) {
+                        icon.classList.add('hidden');
+                    }
                 }
             });
 
@@ -1611,16 +1638,22 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
 
             } catch (error) {
                 console.error('Generation error:', error);
-                document.getElementById('loadingState').classList.remove('hidden');
-                document.getElementById('loadingState').innerHTML = `
+                const loadingEl = document.getElementById('loadingState');
+                if (loadingEl) {
+                    loadingEl.classList.remove('hidden');
+                    loadingEl.innerHTML = `
                     <div class="p-8 text-center text-red-500">
                         <svg class="w-8 h-8 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <p>Error: ${error.message}</p>
                     </div>
-                `;
-                document.getElementById('progressContainer').classList.add('hidden');
+                    `;
+                }
+                const progressContainer = document.getElementById('progressContainer');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
             }
         }
 
