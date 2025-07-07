@@ -1663,24 +1663,22 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
                 `${'='.repeat(100)}\n` +
                 `🚀 INSTALLATION INSTRUCTIONS\n` +
                 `${'='.repeat(100)}\n\n` +
-                `1. Create a new directory: mkdir ${appName}\n` +
+                `1. Unzip the downloaded file\n` +
                 `2. Navigate to directory: cd ${appName}\n` +
-                `3. Extract and organize files according to the project structure above\n` +
-                `4. Install dependencies: npm install\n` +
-                `5. Copy .env.example to .env and configure your database\n` +
-                `6. Run the application: npm run start:dev\n\n` +
+                `3. Install dependencies: npm install\n` +
+                `4. Copy .env.example to .env and configure your database\n` +
+                `5. Run the application: npm run start:dev\n\n` +
                 `📚 Check README.md for detailed setup instructions\n`;
 
             zip.comment = instructions;
 
-            // Add project structure
-            zip.file('PROJECT_STRUCTURE.txt', generatedFiles['structure'] || '');
+            const rootFolder = zip.folder(appName);
 
             // Add generated files with folder structure
             for (const [fileName, fileContent] of Object.entries(generatedFiles)) {
                 if (fileName !== 'structure') {
                     const parts = fileName.split('/');
-                    let folder = zip;
+                    let folder = rootFolder;
                     for (let i = 0; i < parts.length - 1; i++) {
                         folder = folder.folder(parts[i]);
                     }
