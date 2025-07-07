@@ -1652,6 +1652,20 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
             const appName = document.getElementById('appName').value;
             const zip = new JSZip();
 
+            const instructions =
+                `${'='.repeat(100)}\n` +
+                `🚀 INSTALLATION INSTRUCTIONS\n` +
+                `${'='.repeat(100)}\n\n` +
+                `1. Create a new directory: mkdir ${appName}\n` +
+                `2. Navigate to directory: cd ${appName}\n` +
+                `3. Extract and organize files according to the project structure above\n` +
+                `4. Install dependencies: npm install\n` +
+                `5. Copy .env.example to .env and configure your database\n` +
+                `6. Run the application: npm run start:dev\n\n` +
+                `📚 Check README.md for detailed setup instructions\n`;
+
+            zip.comment = instructions;
+
             // Add project structure
             zip.file('PROJECT_STRUCTURE.txt', generatedFiles['structure'] || '');
 
