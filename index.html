@@ -217,10 +217,10 @@ CREATE TABLE posts (
                                 </label>
 
                                 <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
-                                    <input type="checkbox" id="includeSwagger" checked="" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
+                                    <input type="checkbox" id="includeSwagger" checked class="mt-1 mr-3 text-primary focus:ring-primary rounded">
                                     <div class="flex-1">
-                                        <div class="font-medium">📚 Swagger Documentation</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">Interactive API documentation</div>
+                                        <div class="font-medium">📚 Swagger Docs</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Generate Swagger/OpenAPI documentation</div>
                                     </div>
                                 </label>
 
@@ -245,6 +245,20 @@ CREATE TABLE posts (
                                     <div class="flex-1">
                                         <div class="font-medium">📝 Winston Logger</div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">Structured logging with Winston</div>
+                                    </div>
+                                </label>
+                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
+                                    <input type="checkbox" id="includeFtp" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
+                                    <div class="flex-1">
+                                        <div class="font-medium">📁 FTP Support</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Include FTP configuration and file handling utilities</div>
+                                    </div>
+                                </label>
+                                <label class="flex items-start p-4 space-x-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-transform cursor-pointer">
+                                    <input type="checkbox" id="includeGoogleOAuth" class="mt-1 mr-3 text-primary focus:ring-primary rounded">
+                                    <div class="flex-1">
+                                        <div class="font-medium">🔑 Google OAuth</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Add Google OAuth 2.0 authentication setup</div>
                                     </div>
                                 </label>
                             </div>
@@ -497,7 +511,7 @@ CREATE TABLE posts (
             });
 
             // Configuration change listeners
-            ['appName', 'dbType', 'includeAuth', 'includeValidation', 'includeSwagger', 'includeDocker', 'includeTesting', 'includeLogger'].forEach(id => {
+            ['appName', 'dbType', 'includeAuth', 'includeValidation', 'includeSwagger', 'includeDocker', 'includeTesting', 'includeLogger', 'includeFtp', 'includeGoogleOAuth'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
                     element.addEventListener('change', updateConfigSummary);
@@ -558,6 +572,8 @@ CREATE TABLE posts (
             if (config.includeDocker) features.push('🐳 Docker');
             if (config.includeTesting) features.push('🧪 Testing');
             if (config.includeLogger) features.push('📝 Logging');
+            if (config.includeFtp) features.push('📁 FTP');
+            if (config.includeGoogleOAuth) features.push('🔑 Google OAuth');
 
             summaryContent.innerHTML = `
                 <div class="flex items-center justify-between">
@@ -600,7 +616,9 @@ CREATE TABLE posts (
                 includeSwagger: document.getElementById('includeSwagger').checked,
                 includeDocker: document.getElementById('includeDocker').checked,
                 includeTesting: document.getElementById('includeTesting').checked,
-                includeLogger: document.getElementById('includeLogger').checked
+                includeLogger: document.getElementById('includeLogger').checked,
+                includeFtp: document.getElementById('includeFtp').checked,
+                includeGoogleOAuth: document.getElementById('includeGoogleOAuth').checked
             };
         }
 
@@ -640,6 +658,8 @@ CREATE TABLE posts (
             document.getElementById('includeDocker').checked = true;
             document.getElementById('includeTesting').checked = false;
             document.getElementById('includeLogger').checked = false;
+            document.getElementById('includeFtp').checked = false;
+            document.getElementById('includeGoogleOAuth').checked = false;
             document.getElementById('sqlSchema').value = '';
             updateConfigSummary();
         }
@@ -1243,6 +1263,8 @@ CORS_ORIGIN=http://localhost:3000`;
             if (config.includeDocker) features.push('🐳 Docker Support');
             if (config.includeTesting) features.push('🧪 Unit Testing');
             if (config.includeLogger) features.push('📝 Winston Logging');
+            if (config.includeFtp) features.push('📁 FTP Support');
+            if (config.includeGoogleOAuth) features.push('🔑 Google OAuth');
 
             return `# ${config.appName}
 
@@ -1623,7 +1645,16 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
                     totalFiles: Object.keys(generatedFiles).length - 1, // Exclude structure
                     entities: Object.keys(tables).length,
                     endpoints: Object.keys(tables).length * 5, // CRUD operations
-                    features: [config.includeAuth, config.includeValidation, config.includeSwagger, config.includeDocker, config.includeTesting, config.includeLogger].filter(Boolean).length
+                    features: [
+                        config.includeAuth,
+                        config.includeValidation,
+                        config.includeSwagger,
+                        config.includeDocker,
+                        config.includeTesting,
+                        config.includeLogger,
+                        config.includeFtp,
+                        config.includeGoogleOAuth
+                    ].filter(Boolean).length
                 };
 
                 // Show success state
@@ -1656,7 +1687,8 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
 
 
         document.getElementById('downloadZipBtn').addEventListener('click', async () => {
-            const appName = document.getElementById('appName').value;
+            const config = getConfiguration();
+            const appName = config.appName;
             const zip = new JSZip();
 
             const instructions =
@@ -1676,14 +1708,15 @@ ${config.includeDocker ? `├── 🐳 Dockerfile
 
             // Add generated files with folder structure
             for (const [fileName, fileContent] of Object.entries(generatedFiles)) {
-                if (fileName !== 'structure') {
-                    const parts = fileName.split('/');
-                    let folder = rootFolder;
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        folder = folder.folder(parts[i]);
-                    }
-                    folder.file(parts[parts.length - 1], fileContent);
+                if (fileName === 'structure' || fileName === 'PROJECT_STRUCTURE.txt') continue;
+                if (!config.includeAuth && fileName.startsWith('src/auth/')) continue;
+
+                const parts = fileName.split('/');
+                let folder = rootFolder;
+                for (let i = 0; i < parts.length - 1; i++) {
+                    folder = folder.folder(parts[i]);
                 }
+                folder.file(parts[parts.length - 1], fileContent);
             }
 
             const content = await zip.generateAsync({ type: 'blob' });
